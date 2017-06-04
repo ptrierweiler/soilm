@@ -77,8 +77,10 @@ except:
     exit()
 cur = conn.cursor()
 
-cur.execute("select tablename from pg_catalog.pg_tables " +
-			"where schemaname = 'soilm'")
+slct_qry = "select tablename from pg_catalog.pg_tables " + \
+           "where schemaname = 'soilm' and tablename <> 'data'"
+
+cur.execute(slct_qry)
 layers_db_q = cur.fetchall()
 
 db_date_list = []
@@ -132,3 +134,5 @@ for date, b in date_band_dict.items():
         os.system("raster2pgsql -C -I -N -999 {} ".format(fix) +
 			      "-d soilm.{} | psql tlaloc".format(layer))
     os.remove(fix)
+
+os.system("/scripts/soilm/summerize_soil.py")
